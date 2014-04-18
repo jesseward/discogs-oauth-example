@@ -1,9 +1,10 @@
 OAuth and Discogs
 =================
-
-The discogs_example.py script was created to provide a very basic but functioning example of how a developer may utilize the python oauth2 library to download images from the Discogs API. 
+The discogs-oauth-example repo was created to provide a very basic but functioning example of how a developer may utilize the python oauth2 library to download images and make authenticated calls against the Discogs API.
 
 Changes or suggestions are welcomed. Please log an issue or pull request via github.
+
+See [https://github.com/jesseward/discogs-oauth-example](https://github.com/jesseward/discogs-oauth-example)
 
 Requirements
 ============
