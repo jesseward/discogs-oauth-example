@@ -33,13 +33,13 @@ resp, content = client.request(request_token_url, 'POST')
 # we terminate if the discogs api does not return an HTTP 200 OK. Something is 
 # wrong.
 if resp['status'] != '200':
-    raise Exception('Invalid response %s.' % resp['status'])
+    raise Exception('Invalid response {0}.'.format(resp['status']))
 
 request_token = dict(urlparse.parse_qsl(content))
 
 print ' == Request Token == '
-print '    * oauth_token        = %s' % request_token['oauth_token']
-print '    * oauth_token_secret = %s' % request_token['oauth_token_secret']
+print '    * oauth_token        = {0}'.format(request_token['oauth_token'])
+print '    * oauth_token_secret = {0}'.format(request_token['oauth_token_secret'])
 print
 
 # Authorize our newly received request_token against the discogs oauth endpoint.
@@ -90,7 +90,7 @@ client = oauth.Client(consumer, token)
 resp, content = client.request('http://api.discogs.com/image/R-40522-1098545214.jpg')
 
 print ' == Authenticated API image request =='
-print '    * response statuss     = {0}'.format(resp['status'])
+print '    * response status      = {0}'.format(resp['status'])
 print '    * saving image to disk = R-40522-1098545214.jpg'
 
 with open('R-40522-1098545214.jpg', 'w') as fh:
