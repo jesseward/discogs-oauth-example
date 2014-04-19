@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# 
+#
 # This illustrates the call-flow required to complete an OAuth request
 # against the discogs.com API. The script will download and save a single
 # image from the discogs.com API as an example.
@@ -12,24 +12,24 @@ import urlparse
 # and registered . See https://www.discogs.com/settings/developers . These credentials
 # are assigned by application and remain static for the lifetime of your discogs application.
 # the consumer details below were generated for the 'discogs-oauth-example' application.
-consumer_key= 'JJCOegYnRLCLRejtcZbo'
-consumer_secret='UFlGrCViqSkoBNfRTGZyUfmpTGNbFbMM'
+consumer_key = 'JJCOegYnRLCLRejtcZbo'
+consumer_secret = 'UFlGrCViqSkoBNfRTGZyUfmpTGNbFbMM'
 
 # The following oauth end-points are defined by discogs.com staff. These static endpoints
 # are called at various stages of oauth handshaking.
-request_token_url='http://api.discogs.com/oauth/request_token'
-authorize_url='http://www.discogs.com/oauth/authorize'
-access_token_url='http://api.discogs.com/oauth/access_token'
+request_token_url = 'http://api.discogs.com/oauth/request_token'
+authorize_url = 'http://www.discogs.com/oauth/authorize'
+access_token_url = 'http://api.discogs.com/oauth/access_token'
 
-# create oauth Consumer and Client objects using 
+# create oauth Consumer and Client objects using
 consumer = oauth.Consumer(consumer_key, consumer_secret)
 client = oauth.Client(consumer)
 
-# pass in your consumer key and secret to the token request URL. Discogs returns 
+# pass in your consumer key and secret to the token request URL. Discogs returns
 # an ouath_request_token as well as an oauth request_token secret.
 resp, content = client.request(request_token_url, 'POST')
 
-# we terminate if the discogs api does not return an HTTP 200 OK. Something is 
+# we terminate if the discogs api does not return an HTTP 200 OK. Something is
 # wrong.
 if resp['status'] != '200':
     raise Exception('Invalid response {0}.'.format(resp['status']))
@@ -59,7 +59,7 @@ while accepted.lower() == 'n':
 # request the verification token from the user.
 oauth_verifier = raw_input('Verification code :')
 
-# Generate objects that pass the verification key with the oauth token and oauth 
+# Generate objects that pass the verification key with the oauth token and oauth
 # secret to the discogs access_token_url
 token = oauth.Token(request_token['oauth_token'], request_token['oauth_token_secret'])
 token.set_verifier(oauth_verifier)
