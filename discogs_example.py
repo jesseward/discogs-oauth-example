@@ -21,13 +21,17 @@ request_token_url = 'http://api.discogs.com/oauth/request_token'
 authorize_url = 'http://www.discogs.com/oauth/authorize'
 access_token_url = 'http://api.discogs.com/oauth/access_token'
 
+# A user-agent is required with Discogs API requests. Be sure to make your user-agent
+# unique, or you may get a bad response.
+user_agent = 'discogs_api_example/1.0'
+
 # create oauth Consumer and Client objects using
 consumer = oauth.Consumer(consumer_key, consumer_secret)
 client = oauth.Client(consumer)
 
 # pass in your consumer key and secret to the token request URL. Discogs returns
 # an ouath_request_token as well as an oauth request_token secret.
-resp, content = client.request(request_token_url, 'POST')
+resp, content = client.request(request_token_url, 'POST', headers={'User-Agent': user_agent})
 
 # we terminate if the discogs api does not return an HTTP 200 OK. Something is
 # wrong.
@@ -65,7 +69,7 @@ token = oauth.Token(request_token['oauth_token'], request_token['oauth_token_sec
 token.set_verifier(oauth_verifier)
 client = oauth.Client(consumer, token)
 
-resp, content = client.request(access_token_url, 'POST')
+resp, content = client.request(access_token_url, 'POST', headers={'User-Agent': user_agent})
 
 # if verification is successful, the discogs oauth API will return an access token
 # and access token secret. This is the final authentication phase. You should persist
@@ -86,7 +90,8 @@ print
 token = oauth.Token(key=access_token['oauth_token'],
         secret=access_token['oauth_token_secret'])
 client = oauth.Client(consumer, token)
-resp, content = client.request('http://api.discogs.com/image/R-40522-1098545214.jpg')
+resp, content = client.request('http://api.discogs.com/image/R-40522-1098545214.jpg', 
+        headers={'User-Agent': user_agent})
 
 print ' == Authenticated API image request =='
 print '    * response status      = {0}'.format(resp['status'])
