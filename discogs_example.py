@@ -103,8 +103,8 @@ print '    * saving image to disk = R-40522-1098545214.jpg'
 with open('R-40522-1098545214.jpg', 'w') as fh:
     fh.write(content)
 
-# With an active auth token, we're able to resuse the object and request other 
-# authenticated endpoints, such as database search.
+# With an active auth token, we're able to reuse the client object and request 
+# additional discogs authenticated endpoints, such as database search.
 resp, content = client.request('https://api.discogs.com/database/search?release_title=House+For+All&artist=Blunted+Dummies',
         headers={'User-Agent': user_agent})
 
