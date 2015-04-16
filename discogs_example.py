@@ -7,6 +7,7 @@
 #
 import json
 import sys
+import urllib
 import urlparse
 
 import oauth2 as oauth
@@ -93,15 +94,6 @@ print
 token = oauth.Token(key=access_token['oauth_token'],
         secret=access_token['oauth_token_secret'])
 client = oauth.Client(consumer, token)
-resp, content = client.request('https://api.discogs.com/images/R-40522-1098545214.jpg', 
-        headers={'User-Agent': user_agent})
-
-print ' == Authenticated API image request =='
-print '    * response status      = {0}'.format(resp['status'])
-print '    * saving image to disk = R-40522-1098545214.jpg'
-
-with open('R-40522-1098545214.jpg', 'w') as fh:
-    fh.write(content)
 
 # With an active auth token, we're able to reuse the client object and request 
 # additional discogs authenticated endpoints, such as database search.
@@ -122,3 +114,29 @@ for release in releases['results']:
     print u'\tCat No\t: {catno}'.format(catno=release.get('catno', 'Unknown'))
     print u'\tFormats\t: {fmt}'.format(fmt=', '.join(release.get('format',
                  ['Unknown']))) 
+
+# In order to download release images, fetch the release data for id=40522
+# 40522 = http://www.discogs.com/Blunted-Dummies-House-For-All/release/40522
+resp, content = client.request('https://api.discogs.com/releases/40522',
+        headers={'User-Agent': user_agent})
+
+if resp['status'] != '200':
+    sys.exit('Unable to fetch release 40522')
+
+# load the JSON response content into a dictionary.
+release = json.loads(content)
+# extract the first image uri.
+image = release['images'][0]['uri']
+
+# The authenticated URL is genearted for you. There is no longer a need to
+# wrap the image download request in an OAuth signature.
+# build, send the HTTP GET request for the desired image.
+# DOCS: http://www.discogs.com/forum/thread/410594
+try:
+    urllib.urlretrieve(image, image.split('/')[-1])
+except:
+    sys.exit('Unable to download image {0}'.format(image))
+
+print ' == API image request =='
+print '    * response status      = {0}'.format(resp['status'])
+print '    * saving image to disk = {0}'.format(image.split('/')[-1])

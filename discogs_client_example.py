@@ -84,12 +84,12 @@ for release in search_results:
     print u'\tYear\t: {year}'.format(year=release.year)
     print u'\tLabels\t: {label}'.format(label=','.join(label.name for label in release.labels))
 
-# We're now able to fetch an image using the application consumer key and secret,
-# along with the verified oauth token and oauth token for this user.
+# You can reach into the Fetcher lib if you wish to used the wrapped requests
+# library to download an image. The following example demonstrates this.
 content, resp = discogsclient._fetcher.fetch(None, 'GET', search_results[0].images[0]['uri'],
                     headers={'User-agent': discogsclient.user_agent})
 
-print ' == Authenticated API image request =='
+print ' == API image request =='
 print '    * response status      = {0}'.format(resp)
 print '    * saving image to disk = R-40522-1098545214.jpg'
 
