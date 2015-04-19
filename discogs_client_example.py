@@ -6,7 +6,6 @@
 # an API search API as an example. See README.md for further documentation.
 #
 import sys
-import urlparse
 
 import discogs_client
 from discogs_client.exceptions import HTTPError
