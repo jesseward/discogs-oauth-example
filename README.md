@@ -8,7 +8,7 @@ See [https://github.com/jesseward/discogs-oauth-example](https://github.com/jess
 
 Requirements
 ============
-* The python oauth2 library.
+* The python oauth2 library (pip install oauth2).
 * 5 minutes of your time.
 * A [discogs.com](https://www.discogs.com/login) user account 
 
