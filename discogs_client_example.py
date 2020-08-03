@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # This illustrates the call-flow required to complete an OAuth request
-# against the discogs.com API, using the discogs_client libary.
+# against the discogs.com API, using python3-discogs-client libary.
 # The script will download and save a single image and perform and
 # an API search API as an example. See README.md for further documentation.
 
