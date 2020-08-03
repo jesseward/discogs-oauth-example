@@ -12,6 +12,8 @@ Requirements
 * 5 minutes of your time.
 * A [discogs.com](https://www.discogs.com/login) user account 
 
+**Note** The discogs team recently deprecated their Python Discogs-Client library. The [Python3 Discogs Client](https://github.com/joalla/discogs_client) was recently forked in order to continue support for Python developers.
+
 OAuth in a nutshell
 ===================
 
