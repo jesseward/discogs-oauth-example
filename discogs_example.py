@@ -7,8 +7,10 @@
 #
 import json
 import sys
-import urllib
-import urlparse
+
+from urllib import request
+from urllib.parse import parse_qsl
+from urllib.parse import urlparse
 
 import oauth2 as oauth
 
@@ -42,30 +44,28 @@ resp, content = client.request(request_token_url, 'POST', headers={'User-Agent':
 if resp['status'] != '200':
     sys.exit('Invalid response {0}.'.format(resp['status']))
 
-request_token = dict(urlparse.parse_qsl(content))
+request_token = dict(parse_qsl(content.decode('utf-8')))
 
-print ' == Request Token == '
-print '    * oauth_token        = {0}'.format(request_token['oauth_token'])
-print '    * oauth_token_secret = {0}'.format(request_token['oauth_token_secret'])
-print
+print(' == Request Token == ')
+print(f'    * oauth_token        = {request_token["oauth_token"]}')
+print(f'    * oauth_token_secret = {request_token["oauth_token_secret"]}')
+print()
 
 # Authorize our newly received request_token against the discogs oauth endpoint.
 # Prompt your user to "accept" the terms of your application. The application
 # will act on behalf of their discogs.com account.
 # If the user accepts, discogs displays a key to the user that is used for
 # verification. The key is required in the 2nd phase of authentication.
-print 'Please browse to the following URL {0}?oauth_token={1}'.format(
-        authorize_url, request_token['oauth_token'])
+print(f'Please browse to the following URL {authorize_url}?oauth_token={request_token["oauth_token"]}')
 
 # Waiting for user input
 accepted = 'n'
 while accepted.lower() == 'n':
-    print
-    accepted = raw_input('Have you authorized me at {0}?oauth_token={1} [y/n] :'.format(
-        authorize_url, request_token['oauth_token']))
+    print()
+    accepted = input(f'Have you authorized me at {authorize_url}?oauth_token={request_token["oauth_token"]} [y/n] :')
 
 # request the verification token from the user.
-oauth_verifier = raw_input('Verification code :')
+oauth_verifier = input('Verification code : ')
 
 # Generate objects that pass the verification key with the oauth token and oauth
 # secret to the discogs access_token_url
@@ -80,13 +80,13 @@ resp, content = client.request(access_token_url, 'POST', headers={'User-Agent': 
 # the oauth_token and the oauth_token_secret to disk, database or some
 # other local store. All further requests to the discogs.com API that require authentication
 # and must be made with these access_tokens.
-access_token = dict(urlparse.parse_qsl(content))
+access_token = dict(parse_qsl(content.decode('utf-8')))
 
-print ' == Access Token =='
-print '    * oauth_token        = {0}'.format(access_token['oauth_token'])
-print '    * oauth_token_secret = {0}'.format(access_token['oauth_token_secret'])
-print ' Authentication complete. Future requests must be signed with the above tokens.'
-print
+print(' == Access Token ==')
+print(f'    * oauth_token        = {access_token["oauth_token"]}')
+print(f'    * oauth_token_secret = {access_token["oauth_token_secret"]}')
+print(' Authentication complete. Future requests must be signed with the above tokens.')
+print()
 
 
 # We're now able to fetch an image using the application consumer key and secret,
@@ -95,7 +95,7 @@ token = oauth.Token(key=access_token['oauth_token'],
         secret=access_token['oauth_token_secret'])
 client = oauth.Client(consumer, token)
 
-# With an active auth token, we're able to reuse the client object and request 
+# With an active auth token, we're able to reuse the client object and request
 # additional discogs authenticated endpoints, such as database search.
 resp, content = client.request('https://api.discogs.com/database/search?release_title=House+For+All&artist=Blunted+Dummies',
         headers={'User-Agent': user_agent})
@@ -103,17 +103,15 @@ resp, content = client.request('https://api.discogs.com/database/search?release_
 if resp['status'] != '200':
     sys.exit('Invalid API response {0}.'.format(resp['status']))
 
-releases = json.loads(content)
-print '\n== Search results for release_title=House For All, Artist=Blunted Dummies =='
+releases = json.loads(content.decode('utf-8'))
+print('\n== Search results for release_title=House For All, Artist=Blunted Dummies ==')
 for release in releases['results']:
-    print '\n\t== discogs-id {id} =='.format(id=release['id'])
-    print u'\tTitle\t: {title}'.format(title=release.get('title', 'Unknown'))
-    print u'\tYear\t: {year}'.format(year=release.get('year', 'Unknown'))
-    print u'\tLabels\t: {label}'.format(label=', '.join(release.get('label',
-                 ['Unknown'])))
-    print u'\tCat No\t: {catno}'.format(catno=release.get('catno', 'Unknown'))
-    print u'\tFormats\t: {fmt}'.format(fmt=', '.join(release.get('format',
-                 ['Unknown']))) 
+    print(f'\n\t== discogs-id {release["id"]} ==')
+    print(f'\tTitle\t: {release.get("title", "Unknown")}')
+    print(f'\tYear\t: {release.get("year", "Unknown")}')
+    print(f'\tLabels\t: {", ".join(release.get("label", ["Unknown"]))}')
+    print(f'\tCat No\t: {release.get("catno", "Unknown")}')
+    print(f'\tFormats\t: {", ".join(release.get("format", ["Unknown"]))}')
 
 # In order to download release images, fetch the release data for id=40522
 # 40522 = http://www.discogs.com/Blunted-Dummies-House-For-All/release/40522
@@ -124,19 +122,19 @@ if resp['status'] != '200':
     sys.exit('Unable to fetch release 40522')
 
 # load the JSON response content into a dictionary.
-release = json.loads(content)
+release = json.loads(content.decode('utf-8'))
 # extract the first image uri.
 image = release['images'][0]['uri']
 
-# The authenticated URL is genearted for you. There is no longer a need to
+# The authenticated URL is generated for you. There is no longer a need to
 # wrap the image download request in an OAuth signature.
 # build, send the HTTP GET request for the desired image.
 # DOCS: http://www.discogs.com/forum/thread/410594
 try:
-    urllib.urlretrieve(image, image.split('/')[-1])
-except:
-    sys.exit('Unable to download image {0}'.format(image))
+    request.urlretrieve(image, image.split('/')[-1])
+except Exception as e:
+    sys.exit(f'Unable to download image {image}, error {e}')
 
-print ' == API image request =='
-print '    * response status      = {0}'.format(resp['status'])
-print '    * saving image to disk = {0}'.format(image.split('/')[-1])
+print(' == API image request ==')
+print(f'    * response status      = {resp["status"]}')
+print(f'    * saving image to disk = {image.split("/")[-1]}')
