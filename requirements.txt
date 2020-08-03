@@ -1,2 +1,2 @@
 oauth2>=1.5.211
-discogs_client>=2.1.0
+python3-discogs-client>=2.3.2
